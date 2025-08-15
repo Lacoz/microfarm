@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MicroFarm - Isometric Farming Simulator</title>
+    <link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Character Creation Screen -->
+        <div id="character-creation" class="screen active">
+            <div class="creation-panel">
+                <h1>Welcome to MicroFarm</h1>
+                <p>Create your farmer and start your journey!</p>
+                
+                <div class="character-preview">
+                    <canvas id="character-preview-canvas" width="200" height="200"></canvas>
+                </div>
+                
+                <div class="creation-form">
+                    <div class="form-group">
+                        <label for="farmer-name">Farmer Name:</label>
+                        <input type="text" id="farmer-name" placeholder="Enter your name" maxlength="20">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Body Type:</label>
+                        <div class="option-buttons">
+                            <button class="option-btn active" data-body="slim">Slim</button>
+                            <button class="option-btn" data-body="average">Average</button>
+                            <button class="option-btn" data-body="sturdy">Sturdy</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Hair Style:</label>
+                        <div class="option-buttons">
+                            <button class="option-btn active" data-hair="short">Short</button>
+                            <button class="option-btn" data-hair="long">Long</button>
+                            <button class="option-btn" data-hair="curly">Curly</button>
+                            <button class="option-btn" data-hair="bald">Bald</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Hair Color:</label>
+                        <div class="color-picker">
+                            <div class="color-option active" data-color="#8B4513" style="background-color: #8B4513;"></div>
+                            <div class="color-option" data-color="#000000" style="background-color: #000000;"></div>
+                            <div class="color-option" data-color="#FFD700" style="background-color: #FFD700;"></div>
+                            <div class="color-option" data-color="#FF6B6B" style="background-color: #FF6B6B;"></div>
+                            <div class="color-option" data-color="#4ECDC4" style="background-color: #4ECDC4;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Skin Tone:</label>
+                        <div class="color-picker">
+                            <div class="color-option active" data-skin="#FDBB7D" style="background-color: #FDBB7D;"></div>
+                            <div class="color-option" data-skin="#E6C19C" style="background-color: #E6C19C;"></div>
+                            <div class="color-option" data-skin="#D4A574" style="background-color: #D4A574;"></div>
+                            <div class="color-option" data-skin="#C19A6B" style="background-color: #C19A6B;"></div>
+                            <div class="color-option" data-skin="#8B4513" style="background-color: #8B4513;"></div>
+                        </div>
+                    </div>
+                    
+                    <button id="start-game-btn" class="primary-btn">Start Farming!</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Game Screen -->
+        <div id="game-screen" class="screen">
+            <div id="ui-overlay">
+                <div id="top-ui">
+                    <div id="player-info">
+                        <span id="player-name">Farmer</span>
+                        <span id="day-counter">Day 1</span>
+                    </div>
+                    <div id="resources">
+                        <span id="money">$100</span>
+                        <span id="energy">Energy: 100/100</span>
+                    </div>
+                </div>
+                
+                <div id="bottom-ui">
+                    <div id="tools">
+                        <button id="hoe-btn" class="tool-btn active" title="Hoe (H)">🪓</button>
+                        <button id="water-btn" class="tool-btn" title="Water (W)">💧</button>
+                        <button id="plant-btn" class="tool-btn" title="Plant Seeds (P)">🌱</button>
+                        <button id="harvest-btn" class="tool-btn" title="Harvest (G)">✂️</button>
+                    </div>
+                    
+                    <div id="inventory">
+                        <div id="seeds">
+                            <span>Seeds: <span id="seed-count">5</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <canvas id="game-canvas" width="800" height="600"></canvas>
+        </div>
+    </div>
+    
+    <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
