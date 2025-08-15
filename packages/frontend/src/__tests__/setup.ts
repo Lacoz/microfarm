@@ -4,6 +4,7 @@ import { jest } from '@jest/globals';
 // Mock canvas
 Object.defineProperty(window, 'HTMLCanvasElement', {
   value: class HTMLCanvasElement {
+    getContext: any;
     constructor() {
       this.getContext = jest.fn(() => ({
         clearRect: jest.fn(),
@@ -24,7 +25,7 @@ Object.defineProperty(window, 'HTMLCanvasElement', {
 });
 
 // Mock requestAnimationFrame
-global.requestAnimationFrame = jest.fn((callback) => {
+global.requestAnimationFrame = jest.fn((callback: any) => {
   setTimeout(callback, 0);
   return 1;
 });
@@ -32,7 +33,7 @@ global.requestAnimationFrame = jest.fn((callback) => {
 global.cancelAnimationFrame = jest.fn();
 
 // Mock fetch
-global.fetch = jest.fn();
+(global as any).fetch = jest.fn();
 
 // Mock console methods
 global.console = {

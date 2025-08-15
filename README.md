@@ -85,6 +85,21 @@ npm run build:frontend   # Build frontend only
 
 # Utilities
 npm run clean            # Clean all build artifacts
+
+# Testing
+npm run test             # Run all tests
+npm run test:shared      # Test shared utilities
+npm run test:backend     # Test API endpoints
+npm run test:frontend    # Test frontend services
+npm run test:coverage    # Run tests with coverage
+npm run test:watch       # Run tests in watch mode
+
+# CI/CD and Quality Checks
+npm run ci               # Full CI pipeline (audit + build + test)
+npm run audit            # Security audit
+npm run audit:fix        # Fix security vulnerabilities
+npm run outdated         # Check for outdated packages
+npm run depcheck         # Check for unused dependencies
 ```
 
 ## 🎮 How to Play
@@ -157,6 +172,42 @@ The backend provides the following REST API endpoints:
 - `POST /api/players/:playerId/use-tool` - Use a tool on a tile
 - `PUT /api/players/:playerId/game-state` - Update game state
 - `POST /api/players/:playerId/update-crops` - Update crop growth
+
+## 🚀 CI/CD Pipeline
+
+This project uses GitHub Actions for continuous integration and deployment:
+
+### **Automated Workflows**
+
+- **Test**: Runs on every push to `main` and pull requests
+  - Tests on Node.js 18.x and 20.x
+  - Runs security audits
+  - Builds all packages
+  - Runs comprehensive test suites
+  - Uploads coverage reports to Codecov
+
+- **Lint**: Code quality checks
+  - TypeScript compilation validation
+  - Unused dependency detection
+  - Build verification
+
+- **Security**: Security-focused checks
+  - Vulnerability scanning
+  - Outdated package detection
+  - Security audit enforcement
+
+### **Local CI Testing**
+
+Run the full CI pipeline locally:
+```bash
+npm run ci
+```
+
+This command runs:
+1. Security audit
+2. Shared package build
+3. All tests
+4. Full build process
 
 ## 🎨 Game Tips
 

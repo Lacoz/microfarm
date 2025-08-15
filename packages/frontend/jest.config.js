@@ -20,8 +20,8 @@ const config = {
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
   setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
-  moduleNameMapping: {
-    '^@microfarm/shared$': '<rootDir>/../shared/src',
+  moduleNameMapper: {
+    '^@microfarm/shared$': '<rootDir>/../shared/dist/index.js',
   },
   testPathIgnorePatterns: ['<rootDir>/src/__tests__/setup.ts'],
 };
