@@ -15,14 +15,22 @@
     "build:backend": "npm run build --workspace=packages/backend",
     "build:frontend": "npm run build --workspace=packages/frontend",
     "test": "npm run test --workspaces",
+    "test:shared": "npm run test --workspace=packages/shared",
+    "test:backend": "npm run test --workspace=packages/backend",
+    "test:frontend": "npm run test --workspace=packages/frontend",
+    "test:watch": "npm run test:watch --workspaces",
+    "test:coverage": "npm run test:coverage --workspaces",
     "lint": "npm run lint --workspaces",
     "clean": "npm run clean --workspaces && rm -rf node_modules"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
+    "@types/jest": "^29.5.0",
     "concurrently": "^8.2.2",
     "typescript": "^5.3.0",
-    "ts-node": "^10.9.0"
+    "ts-node": "^10.9.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.0"
   },
   "engines": {
     "node": ">=18.0.0",
