@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import path from 'path';
 
 export default defineConfig({
   server: {
@@ -13,5 +14,10 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true
+  },
+  resolve: {
+    alias: {
+      '@microfarm/shared': path.resolve(__dirname, '../shared/dist/index.js')
+    }
   }
 });

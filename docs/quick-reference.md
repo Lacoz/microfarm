@@ -2,240 +2,230 @@
 
 ## 🚀 Common Commands
 
-### Development
+### **Development**
 ```bash
-# Start both servers
-npm run dev
-
-# Start individually
-npm run dev:backend   # Backend on port 3001
-npm run dev:frontend  # Frontend on port 3000
-
-# Build packages
-npm run build:shared
-npm run build:backend
-npm run build:frontend
-npm run build         # Build all packages
+npm install                    # Install all dependencies
+npm run dev                    # Start both backend and frontend
+npm run dev:backend           # Start backend only (port 3001)
+npm run dev:frontend          # Start frontend only (port 3000)
 ```
 
-### Package Management
+### **Building**
 ```bash
-# Add dependency to specific package
-npm install package-name --workspace=packages/backend
-npm install package-name --workspace=packages/frontend
-npm install package-name --workspace=packages/shared
-
-# Add dev dependency
-npm install -D package-name --workspace=packages/backend
+npm run build                 # Build all packages
+npm run build:shared          # Build shared package first
+npm run build:backend         # Build backend package
+npm run build:frontend        # Build frontend package
+npm run clean                 # Clean all build artifacts
 ```
 
-## 📁 File Structure Patterns
-
-### New Feature Development
-```
-packages/
-├── shared/src/
-│   ├── types.ts          # Add new types here
-│   └── utils.ts          # Add new utilities here
-├── backend/src/
-│   └── index.ts          # Add new API endpoints here
-└── frontend/src/
-    ├── game/             # Add game logic here
-    ├── ui/              # Add UI components here
-    ├── renderers/       # Add rendering logic here
-    └── services/        # Add API services here
+### **Testing**
+```bash
+npm run test                  # Run all tests
+npm run test:shared           # Test shared utilities
+npm run test:backend          # Test API endpoints
+npm run test:frontend         # Test frontend services
+npm run test:coverage         # Run tests with coverage
+npm run test:watch            # Run tests in watch mode
 ```
 
-### Type Definitions Pattern
+## 📁 File Structure
+
+```
+microfarm/
+├── .cursor/
+│   └── rules/
+│       └── instructions.mdc  # Development rules
+├── docs/
+│   ├── README.md            # Documentation index
+│   ├── quick-reference.md   # This file
+│   └── testing.md           # Testing documentation
+├── packages/
+│   ├── shared/              # Common types and utilities
+│   │   ├── src/
+│   │   │   ├── types.ts     # Game interfaces
+│   │   │   ├── utils.ts     # Utility functions
+│   │   │   └── index.ts     # Main exports
+│   │   └── dist/            # Built shared package
+│   ├── backend/             # Express API server
+│   │   ├── src/
+│   │   │   └── index.ts     # Main server file
+│   │   └── dist/            # Built backend
+│   └── frontend/            # Vite frontend app
+│       ├── src/
+│       │   ├── game/        # Game logic
+│       │   ├── ui/          # UI components
+│       │   ├── renderers/   # Canvas rendering
+│       │   ├── services/    # API services
+│       │   └── main.ts      # Entry point
+│       └── dist/            # Built frontend
+└── README.md                # Main project README
+```
+
+## 🔧 Type Definitions
+
+### **Core Types**
 ```typescript
-// packages/shared/src/types.ts
-export interface NewFeature {
+interface Player {
   id: string;
   name: string;
-  data: any;
+  bodyType: 'slim' | 'average' | 'sturdy';
+  hairStyle: 'short' | 'long' | 'curly' | 'bald';
+  hairColor: string;
+  skinTone: string;
+  createdAt: Date;
+  lastActive: Date;
 }
 
-export type FeatureStatus = 'active' | 'inactive' | 'pending';
+interface GameState {
+  player: Player;
+  game: {
+    day: number;
+    money: number;
+    energy: number;
+    maxEnergy: number;
+    seeds: number;
+    currentTool: ToolType;
+  };
+  farm: {
+    tiles: FarmTile[][];
+    width: number;
+    height: number;
+  };
+  camera: {
+    x: number;
+    y: number;
+  };
+}
 ```
 
-### API Endpoint Pattern
+## 🌐 API Endpoints
+
+### **Player Management**
+```bash
+POST /api/players              # Create new player
+GET /api/players/:id           # Get player and game state
+```
+
+### **Game Actions**
+```bash
+POST /api/players/:id/use-tool # Use tool on tile
+PUT /api/players/:id/game-state # Update game state
+POST /api/players/:id/update-crops # Update crop growth
+```
+
+### **Health Check**
+```bash
+GET /health                    # Server health status
+```
+
+## 🎮 Frontend Service
+
+### **ApiService Methods**
 ```typescript
-// packages/backend/src/index.ts
-app.post('/api/new-feature', (req, res) => {
-  try {
-    // Validate input
-    // Process request
-    // Return response
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error'
+class ApiService {
+  createPlayer(data: CreatePlayerRequest): Promise<PlayerData>
+  getPlayer(id: string): Promise<PlayerData>
+  useTool(id: string, tool: ToolType, x: number, y: number): Promise<ToolResult>
+  updateGameState(id: string, data: UpdateGameStateRequest): Promise<GameState>
+  updateCrops(id: string): Promise<GameState>
+}
+```
+
+## 🎯 Game Development
+
+### **Tools**
+- **Hoe**: Till grass tiles (cost: 5 energy)
+- **Water**: Water tilled tiles (cost: 3 energy)
+- **Plant**: Plant seeds on watered tiles (cost: 2 energy)
+- **Harvest**: Harvest mature crops (cost: 3 energy)
+
+### **Tile States**
+1. **Grass** → **Tilled** (with hoe)
+2. **Tilled** → **Watered** (with water)
+3. **Watered** → **Planted** (with plant)
+4. **Planted** → **Mature** (over time)
+5. **Mature** → **Harvested** (with harvest)
+
+## 🔧 TypeScript
+
+### **Build Order**
+1. **Shared** package first (types and utilities)
+2. **Backend** package (depends on shared)
+3. **Frontend** package (depends on shared)
+
+### **Module Resolution**
+- **Shared**: ES modules for Vite compatibility
+- **Backend**: CommonJS for Node.js
+- **Frontend**: ES modules with Vite
+
+## 🚨 Error Handling
+
+### **Common Issues**
+1. **Build fails**: Run `npm run build:shared` first
+2. **Module not found**: Check package dependencies
+3. **Type errors**: Ensure shared package is built
+4. **Port conflicts**: Check if servers are running
+
+### **Debugging**
+```bash
+# Check if servers are running
+curl http://localhost:3001/health
+curl http://localhost:3000
+
+# View logs
+npm run dev:backend  # Backend logs
+npm run dev:frontend # Frontend logs
+```
+
+## 📝 Code Style
+
+### **Naming Conventions**
+- **Files**: kebab-case (`character-creation-manager.ts`)
+- **Classes**: PascalCase (`GameManager`)
+- **Functions**: camelCase (`updateGameState`)
+- **Constants**: UPPER_SNAKE_CASE (`GAME_CONSTANTS`)
+
+### **File Organization**
+- One class per file
+- Group related functionality
+- Export only what's needed
+- Use barrel exports (index.ts)
+
+## 🧪 Testing
+
+### **Test Structure**
+```typescript
+describe('Feature Name', () => {
+  describe('Method Name', () => {
+    it('should do something specific', () => {
+      // Arrange
+      const input = 'test';
+      
+      // Act
+      const result = functionToTest(input);
+      
+      // Assert
+      expect(result).toBe('expected');
     });
-  }
+  });
 });
 ```
 
-### Frontend Service Pattern
-```typescript
-// packages/frontend/src/services/NewFeatureService.ts
-export class NewFeatureService {
-  async createFeature(data: CreateFeatureRequest): Promise<ApiResponse<Feature>> {
-    const response = await fetch('/api/new-feature', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to create feature');
-    }
-    
-    return response.json();
-  }
-}
-```
+### **Coverage Goals**
+- **Minimum**: 80% overall coverage
+- **Target**: 90% overall coverage
+- **Current**: 97.95% (Excellent)
 
-## 🎮 Game Development Patterns
+## 🚀 Best Practices Summary
 
-### Game State Update
-```typescript
-// Update game state
-const newGameState = { ...currentGameState, newProperty: value };
-await apiService.updateGameState(playerId, { gameState: newGameState });
-```
+1. **Build Order**: Always build shared package first
+2. **Type Safety**: Use strict TypeScript, avoid `any`
+3. **Testing**: Write tests for all new functionality
+4. **Error Handling**: Always handle async operations
+5. **Documentation**: Keep docs up-to-date
+6. **Code Quality**: Follow the development rules in `.cursor/rules/instructions.mdc`
 
-### Tool Usage Pattern
-```typescript
-// Use tool on tile
-const result = await apiService.useTool(playerId, tool, tileX, tileY);
-if (result.success) {
-  gameState = result.gameState;
-  uiManager.updateGameUI(gameState);
-}
-```
+---
 
-### Rendering Pattern
-```typescript
-// Game loop
-const gameLoop = () => {
-  gameRenderer.render(gameState);
-  requestAnimationFrame(gameLoop);
-};
-```
-
-## 🔧 TypeScript Patterns
-
-### Interface Definition
-```typescript
-export interface GameComponent {
-  id: string;
-  type: ComponentType;
-  position: { x: number; y: number };
-  properties: Record<string, any>;
-}
-```
-
-### Union Types
-```typescript
-export type ToolType = 'hoe' | 'water' | 'plant' | 'harvest';
-export type TileType = 'grass' | 'tilled' | 'watered' | 'planted';
-```
-
-### Utility Functions
-```typescript
-export function validateGameData(data: unknown): data is GameData {
-  return (
-    typeof data === 'object' &&
-    data !== null &&
-    'player' in data &&
-    'game' in data
-  );
-}
-```
-
-## 🎯 Error Handling Patterns
-
-### API Error Handling
-```typescript
-try {
-  const result = await apiService.someOperation();
-  // Handle success
-} catch (error) {
-  console.error('Operation failed:', error);
-  uiManager.showMessage('Operation failed', 'error');
-}
-```
-
-### Input Validation
-```typescript
-function validateInput(data: any): { valid: boolean; errors: string[] } {
-  const errors: string[] = [];
-  
-  if (!data.name || typeof data.name !== 'string') {
-    errors.push('Name is required and must be a string');
-  }
-  
-  return { valid: errors.length === 0, errors };
-}
-```
-
-## 📝 Code Style Quick Reference
-
-### Naming
-- **Files**: `kebab-case.ts`
-- **Classes**: `PascalCase`
-- **Functions**: `camelCase`
-- **Constants**: `UPPER_SNAKE_CASE`
-- **Interfaces**: `PascalCase`
-
-### Imports
-```typescript
-// Prefer specific imports
-import { GameState, Player } from '@microfarm/shared';
-
-// Use barrel exports for clean imports
-export * from './types';
-export * from './utils';
-```
-
-### Comments
-```typescript
-/**
- * Updates the game state with new player data
- * @param playerId - The unique identifier of the player
- * @param data - The new player data to update
- * @returns Promise resolving to the updated game state
- */
-async function updatePlayer(playerId: string, data: PlayerData): Promise<GameState> {
-  // Implementation
-}
-```
-
-## 🚨 Common Issues & Solutions
-
-### TypeScript Errors
-- **"Cannot find module"**: Check import paths and build shared package
-- **"Property does not exist"**: Add proper type definitions
-- **"Implicit any"**: Add explicit type annotations
-
-### Monorepo Issues
-- **Workspace not found**: Check package.json workspace configuration
-- **Build order**: Always build shared package first
-- **Dependency issues**: Use workspace-specific install commands
-
-### Development Issues
-- **Hot reload not working**: Check file paths and TypeScript config
-- **API not responding**: Check server logs and CORS configuration
-- **Build failures**: Check TypeScript errors and dependency versions
-
-## 🎯 Best Practices Summary
-
-1. **Keep it Simple**: Choose readable code over clever solutions
-2. **Type Everything**: Use TypeScript's type system effectively
-3. **Separate Concerns**: Keep UI, logic, and data separate
-4. **Handle Errors**: Always implement proper error handling
-5. **Document Code**: Add comments for complex logic
-6. **Test Regularly**: Write tests for critical functionality
-7. **Follow Patterns**: Use established patterns consistently
-8. **Optimize Later**: Focus on correctness before optimization
+**Quick Start**: `npm install && npm run build:shared && npm run dev`

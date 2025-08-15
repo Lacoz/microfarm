@@ -124,7 +124,6 @@ export class UIManager {
           onToolSelect('harvest');
           break;
         case 'arrowup':
-        case 'w':
           onCameraMove('up');
           break;
         case 'arrowdown':
