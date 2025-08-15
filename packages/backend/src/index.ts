@@ -1,7 +1,7 @@
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import morgan from 'morgan';
+import { Hono } from 'hono';
+import { serve } from '@hono/node-server';
+import { cors } from 'hono/cors';
+import { logger } from 'hono/logger';
 import { v4 as uuidv4 } from 'uuid';
 import { 
   Player, 
@@ -15,18 +15,16 @@ import {
 } from '@microfarm/shared';
 import { initializeFarm, generateId, validatePlayerData, getEnergyCost, canUseTool, calculateHarvestValue } from '@microfarm/shared';
 
-const app = express();
-const PORT = process.env.PORT || 3001;
+const app = new Hono();
+const PORT = parseInt(process.env.PORT || '3001', 10);
 
 // In-memory storage (in production, use a database)
 const players = new Map<string, Player>();
 const gameStates = new Map<string, GameState>();
 
 // Middleware
-app.use(helmet());
-app.use(cors());
-app.use(morgan('combined'));
-app.use(express.json());
+app.use('*', cors());
+app.use('*', logger());
 
 // Initialize a new game state for a player
 function createGameState(player: Player): GameState {
@@ -52,26 +50,24 @@ function createGameState(player: Player): GameState {
   };
 }
 
-// Routes
-
 // Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+app.get('/health', (c) => {
+  return c.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 // Create a new player
-app.post('/api/players', (req, res) => {
+app.post('/api/players', async (c) => {
   try {
-    const playerData: CreatePlayerRequest = req.body;
+    const playerData: CreatePlayerRequest = await c.req.json();
     
     // Validate player data
     const validation = validatePlayerData(playerData);
     if (!validation.valid) {
-      return res.status(400).json({
+      return c.json({
         success: false,
         error: 'Invalid player data',
         details: validation.errors
-      } as ApiResponse);
+      } as ApiResponse, 400);
     }
     
     // Create player
@@ -93,78 +89,78 @@ app.post('/api/players', (req, res) => {
     const gameState = createGameState(player);
     gameStates.set(player.id, gameState);
     
-    res.status(201).json({
+    return c.json({
       success: true,
       data: { player, gameState }
-    } as ApiResponse);
+    } as ApiResponse, 201);
     
   } catch (error) {
     console.error('Error creating player:', error);
-    res.status(500).json({
+    return c.json({
       success: false,
       error: 'Internal server error'
-    } as ApiResponse);
+    } as ApiResponse, 500);
   }
 });
 
 // Get player and game state
-app.get('/api/players/:playerId', (req, res) => {
+app.get('/api/players/:playerId', (c) => {
   try {
-    const { playerId } = req.params;
+    const playerId = c.req.param('playerId');
     
     const player = players.get(playerId);
     if (!player) {
-      return res.status(404).json({
+      return c.json({
         success: false,
         error: 'Player not found'
-      } as ApiResponse);
+      } as ApiResponse, 404);
     }
     
     const gameState = gameStates.get(playerId);
     if (!gameState) {
-      return res.status(404).json({
+      return c.json({
         success: false,
         error: 'Game state not found'
-      } as ApiResponse);
+      } as ApiResponse, 404);
     }
     
     // Update last active
     player.lastActive = new Date();
     
-    res.json({
+    return c.json({
       success: true,
       data: { player, gameState }
     } as ApiResponse);
     
   } catch (error) {
     console.error('Error getting player:', error);
-    res.status(500).json({
+    return c.json({
       success: false,
       error: 'Internal server error'
-    } as ApiResponse);
+    } as ApiResponse, 500);
   }
 });
 
 // Use tool on farm tile
-app.post('/api/players/:playerId/use-tool', (req, res) => {
+app.post('/api/players/:playerId/use-tool', async (c) => {
   try {
-    const { playerId } = req.params;
-    const { tool, tileX, tileY } = req.body;
+    const playerId = c.req.param('playerId');
+    const { tool, tileX, tileY } = await c.req.json();
     
     const gameState = gameStates.get(playerId);
     if (!gameState) {
-      return res.status(404).json({
+      return c.json({
         success: false,
         error: 'Game state not found'
-      } as ApiResponse);
+      } as ApiResponse, 404);
     }
     
     // Validate coordinates
     if (tileX < 0 || tileX >= gameState.farm.width || tileY < 0 || tileY >= gameState.farm.height) {
-      return res.status(400).json({
+      return c.json({
         success: false,
         error: 'Invalid tile coordinates'
-      } as ApiResponse);
+      } as ApiResponse, 400);
     }
     
     const tile = gameState.farm.tiles[tileY][tileX];
@@ -172,18 +168,18 @@ app.post('/api/players/:playerId/use-tool', (req, res) => {
     
     // Check if player has enough energy
     if (gameState.game.energy < energyCost) {
-      return res.status(400).json({
+      return c.json({
         success: false,
         error: 'Not enough energy'
-      } as ApiResponse);
+      } as ApiResponse, 400);
     }
     
     // Check if tool can be used on this tile
     if (!canUseTool(tile, tool as ToolType)) {
-      return res.status(400).json({
+      return c.json({
         success: false,
         error: 'Cannot use this tool on this tile'
-      } as ApiResponse);
+      } as ApiResponse, 400);
     }
     
     // Apply tool effect
@@ -241,7 +237,7 @@ app.post('/api/players/:playerId/use-tool', (req, res) => {
       }
     }
     
-    res.json({
+    return c.json({
       success: true,
       data: {
         success,
@@ -253,25 +249,25 @@ app.post('/api/players/:playerId/use-tool', (req, res) => {
     
   } catch (error) {
     console.error('Error using tool:', error);
-    res.status(500).json({
+    return c.json({
       success: false,
       error: 'Internal server error'
-    } as ApiResponse);
+    } as ApiResponse, 500);
   }
 });
 
 // Update game state (for camera movement, etc.)
-app.put('/api/players/:playerId/game-state', (req, res) => {
+app.put('/api/players/:playerId/game-state', async (c) => {
   try {
-    const { playerId } = req.params;
-    const updateData: UpdateGameStateRequest = req.body;
+    const playerId = c.req.param('playerId');
+    const updateData: UpdateGameStateRequest = await c.req.json();
     
     const gameState = gameStates.get(playerId);
     if (!gameState) {
-      return res.status(404).json({
+      return c.json({
         success: false,
         error: 'Game state not found'
-      } as ApiResponse);
+      } as ApiResponse, 404);
     }
     
     // Update allowed fields
@@ -289,31 +285,31 @@ app.put('/api/players/:playerId/game-state', (req, res) => {
       player.lastActive = new Date();
     }
     
-    res.json({
+    return c.json({
       success: true,
       data: { gameState }
     } as ApiResponse);
     
   } catch (error) {
     console.error('Error updating game state:', error);
-    res.status(500).json({
+    return c.json({
       success: false,
       error: 'Internal server error'
-    } as ApiResponse);
+    } as ApiResponse, 500);
   }
 });
 
 // Update crop growth (called periodically)
-app.post('/api/players/:playerId/update-crops', (req, res) => {
+app.post('/api/players/:playerId/update-crops', (c) => {
   try {
-    const { playerId } = req.params;
+    const playerId = c.req.param('playerId');
     
     const gameState = gameStates.get(playerId);
     if (!gameState) {
-      return res.status(404).json({
+      return c.json({
         success: false,
         error: 'Game state not found'
-      } as ApiResponse);
+      } as ApiResponse, 404);
     }
     
     // Update crop growth
@@ -330,25 +326,28 @@ app.post('/api/players/:playerId/update-crops', (req, res) => {
       }
     }
     
-    res.json({
+    return c.json({
       success: true,
       data: { gameState }
     } as ApiResponse);
     
   } catch (error) {
     console.error('Error updating crops:', error);
-    res.status(500).json({
+    return c.json({
       success: false,
       error: 'Internal server error'
-    } as ApiResponse);
+    } as ApiResponse, 500);
   }
 });
 
 // Start server
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, () => {
-    console.log(`🚀 MicroFarm Backend Server running on port ${PORT}`);
-    console.log(`📊 Health check: http://localhost:${PORT}/health`);
+  serve({
+    fetch: app.fetch,
+    port: PORT
+  }, (info) => {
+    console.log(`🚀 MicroFarm Backend Server running on port ${info.port}`);
+    console.log(`📊 Health check: http://localhost:${info.port}/health`);
   });
 }
 

@@ -47,7 +47,7 @@ microfarm/
 │   │   │   ├── utils.ts     # Utility functions
 │   │   │   └── index.ts     # Main exports
 │   │   └── dist/            # Built shared package
-│   ├── backend/             # Express API server
+│   ├── backend/             # Hono API server
 │   │   ├── src/
 │   │   │   └── index.ts     # Main server file
 │   │   └── dist/            # Built backend

@@ -7,7 +7,7 @@ A modern TypeScript-based isometric farming simulation game with a monorepo arch
 This project is structured as an npm monorepo with the following packages:
 
 - **`@microfarm/shared`**: Shared types, utilities, and constants
-- **`@microfarm/backend`**: Express.js API server with game logic
+- **`@microfarm/backend`**: Hono.js API server with game logic
 - **`@microfarm/frontend`**: Vite-based frontend with TypeScript and Canvas rendering
 
 ## 🚀 Features
@@ -36,6 +36,7 @@ This project is structured as an npm monorepo with the following packages:
 ### Technical Features
 - **TypeScript**: Full type safety across all packages
 - **Monorepo**: Shared code and types between frontend and backend
+- **Modern Stack**: Hono.js backend with Web API standards
 - **REST API**: Clean separation between client and server
 - **Real-time**: Live crop growth and game state updates
 - **Responsive**: Works on desktop and mobile devices

@@ -1,5 +1,5 @@
-import request from 'supertest';
-import express from 'express';
+import { describe, it, expect, beforeAll } from '@jest/globals';
+import { Hono } from 'hono';
 import { 
   Player, 
   CreatePlayerRequest, 
@@ -8,13 +8,38 @@ import {
 } from '@microfarm/shared';
 
 // Import the app without starting the server
-let app: express.Application;
+let app: Hono;
 
 beforeAll(async () => {
   // Import the app module
   const appModule = await import('../index');
   app = appModule.default;
 });
+
+// Helper function to make requests to Hono app
+async function makeRequest(method: string, path: string, body?: any) {
+  const url = new URL(`http://localhost${path}`);
+  const requestInit: RequestInit = {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+
+  if (body) {
+    requestInit.body = JSON.stringify(body);
+  }
+
+  const request = new Request(url.toString(), requestInit);
+  const response = await app.fetch(request);
+  const responseBody = await response.json();
+
+  return {
+    status: response.status,
+    body: responseBody,
+    headers: response.headers,
+  };
+}
 
 describe('API Endpoints', () => {
   let playerId: string;
@@ -30,11 +55,9 @@ describe('API Endpoints', () => {
         skinTone: '#FDBB7D'
       };
 
-      const response = await request(app)
-        .post('/api/players')
-        .send(playerData)
-        .expect(201);
+      const response = await makeRequest('POST', '/api/players', playerData);
 
+      expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
       expect(response.body.data.player).toBeDefined();
       expect(response.body.data.gameState).toBeDefined();
@@ -61,11 +84,9 @@ describe('API Endpoints', () => {
         skinTone: ''
       };
 
-      const response = await request(app)
-        .post('/api/players')
-        .send(invalidData)
-        .expect(400);
+      const response = await makeRequest('POST', '/api/players', invalidData);
 
+      expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
       expect(response.body.error).toBe('Invalid player data');
       expect(response.body.details).toBeDefined();
@@ -78,21 +99,18 @@ describe('API Endpoints', () => {
         // Missing other required fields
       };
 
-      const response = await request(app)
-        .post('/api/players')
-        .send(incompleteData)
-        .expect(400);
+      const response = await makeRequest('POST', '/api/players', incompleteData);
 
+      expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
     });
   });
 
   describe('GET /api/players/:playerId', () => {
     it('should return player and game state', async () => {
-      const response = await request(app)
-        .get(`/api/players/${playerId}`)
-        .expect(200);
+      const response = await makeRequest('GET', `/api/players/${playerId}`);
 
+      expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data.player).toBeDefined();
       expect(response.body.data.gameState).toBeDefined();
@@ -109,10 +127,9 @@ describe('API Endpoints', () => {
     });
 
     it('should return 404 for non-existent player', async () => {
-      const response = await request(app)
-        .get('/api/players/non-existent-id')
-        .expect(404);
+      const response = await makeRequest('GET', '/api/players/non-existent-id');
 
+      expect(response.status).toBe(404);
       expect(response.body.success).toBe(false);
       expect(response.body.error).toBe('Player not found');
     });
@@ -126,11 +143,9 @@ describe('API Endpoints', () => {
         tileY: 0
       };
 
-      const response = await request(app)
-        .post(`/api/players/${playerId}/use-tool`)
-        .send(toolData)
-        .expect(200);
+      const response = await makeRequest('POST', `/api/players/${playerId}/use-tool`, toolData);
 
+      expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data.success).toBe(true);
       expect(response.body.data.energyCost).toBe(GAME_CONSTANTS.ENERGY_COSTS.hoe);
@@ -141,49 +156,33 @@ describe('API Endpoints', () => {
 
     it('should use water tool on tilled tile', async () => {
       // First till the tile
-      await request(app)
-        .post(`/api/players/${playerId}/use-tool`)
-        .send({ tool: 'hoe', tileX: 1, tileY: 1 })
-        .expect(200);
+      await makeRequest('POST', `/api/players/${playerId}/use-tool`, { tool: 'hoe', tileX: 1, tileY: 1 });
 
       // Then water it
-      const response = await request(app)
-        .post(`/api/players/${playerId}/use-tool`)
-        .send({ tool: 'water', tileX: 1, tileY: 1 })
-        .expect(200);
+      const response = await makeRequest('POST', `/api/players/${playerId}/use-tool`, { tool: 'water', tileX: 1, tileY: 1 });
 
+      expect(response.status).toBe(200);
       expect(response.body.data.success).toBe(true);
       expect(response.body.data.energyCost).toBe(GAME_CONSTANTS.ENERGY_COSTS.water);
     });
 
     it('should use plant tool on watered tile', async () => {
       // First till and water the tile
-      await request(app)
-        .post(`/api/players/${playerId}/use-tool`)
-        .send({ tool: 'hoe', tileX: 2, tileY: 2 })
-        .expect(200);
-
-      await request(app)
-        .post(`/api/players/${playerId}/use-tool`)
-        .send({ tool: 'water', tileX: 2, tileY: 2 })
-        .expect(200);
+      await makeRequest('POST', `/api/players/${playerId}/use-tool`, { tool: 'hoe', tileX: 2, tileY: 2 });
+      await makeRequest('POST', `/api/players/${playerId}/use-tool`, { tool: 'water', tileX: 2, tileY: 2 });
 
       // Then plant
-      const response = await request(app)
-        .post(`/api/players/${playerId}/use-tool`)
-        .send({ tool: 'plant', tileX: 2, tileY: 2 })
-        .expect(200);
+      const response = await makeRequest('POST', `/api/players/${playerId}/use-tool`, { tool: 'plant', tileX: 2, tileY: 2 });
 
+      expect(response.status).toBe(200);
       expect(response.body.data.success).toBe(true);
       expect(response.body.data.energyCost).toBe(GAME_CONSTANTS.ENERGY_COSTS.plant);
     });
 
     it('should reject invalid tile coordinates', async () => {
-      const response = await request(app)
-        .post(`/api/players/${playerId}/use-tool`)
-        .send({ tool: 'hoe', tileX: 100, tileY: 100 })
-        .expect(400);
+      const response = await makeRequest('POST', `/api/players/${playerId}/use-tool`, { tool: 'hoe', tileX: 100, tileY: 100 });
 
+      expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
       expect(response.body.error).toBe('Invalid tile coordinates');
     });
@@ -191,26 +190,20 @@ describe('API Endpoints', () => {
     it('should reject tool usage when not enough energy', async () => {
       // Use up all energy
       for (let i = 0; i < 20; i++) {
-        await request(app)
-          .post(`/api/players/${playerId}/use-tool`)
-          .send({ tool: 'hoe', tileX: i, tileY: 0 });
+        await makeRequest('POST', `/api/players/${playerId}/use-tool`, { tool: 'hoe', tileX: i, tileY: 0 });
       }
 
-      const response = await request(app)
-        .post(`/api/players/${playerId}/use-tool`)
-        .send({ tool: 'hoe', tileX: 5, tileY: 5 })
-        .expect(400);
+      const response = await makeRequest('POST', `/api/players/${playerId}/use-tool`, { tool: 'hoe', tileX: 5, tileY: 5 });
 
+      expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
       expect(response.body.error).toBe('Not enough energy');
     });
 
     it('should reject invalid tool usage', async () => {
-      const response = await request(app)
-        .post(`/api/players/${playerId}/use-tool`)
-        .send({ tool: 'water', tileX: 0, tileY: 0 }) // Water on grass
-        .expect(400);
+      const response = await makeRequest('POST', `/api/players/${playerId}/use-tool`, { tool: 'water', tileX: 0, tileY: 0 }); // Water on grass
 
+      expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
       expect(response.body.error).toBe('Not enough energy'); // Player ran out of energy in previous tests
     });
@@ -225,11 +218,9 @@ describe('API Endpoints', () => {
         }
       };
 
-      const response = await request(app)
-        .put(`/api/players/${playerId}/game-state`)
-        .send(updateData)
-        .expect(200);
+      const response = await makeRequest('PUT', `/api/players/${playerId}/game-state`, updateData);
 
+      expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data.gameState.camera.x).toBe(10);
       expect(response.body.data.gameState.camera.y).toBe(20);
@@ -243,11 +234,9 @@ describe('API Endpoints', () => {
         }
       };
 
-      const response = await request(app)
-        .put(`/api/players/${playerId}/game-state`)
-        .send(updateData)
-        .expect(200);
+      const response = await makeRequest('PUT', `/api/players/${playerId}/game-state`, updateData);
 
+      expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data.gameState.game.currentTool).toBe('water');
     });
@@ -264,34 +253,20 @@ describe('API Endpoints', () => {
         skinTone: '#FDBB7D'
       };
 
-      const createResponse = await request(app)
-        .post('/api/players')
-        .send(freshPlayerData)
-        .expect(201);
+      const createResponse = await makeRequest('POST', '/api/players', freshPlayerData);
 
+      expect(createResponse.status).toBe(201);
       const freshPlayerId = createResponse.body.data.player.id;
 
       // First plant a crop
-      await request(app)
-        .post(`/api/players/${freshPlayerId}/use-tool`)
-        .send({ tool: 'hoe', tileX: 3, tileY: 3 })
-        .expect(200);
-
-      await request(app)
-        .post(`/api/players/${freshPlayerId}/use-tool`)
-        .send({ tool: 'water', tileX: 3, tileY: 3 })
-        .expect(200);
-
-      await request(app)
-        .post(`/api/players/${freshPlayerId}/use-tool`)
-        .send({ tool: 'plant', tileX: 3, tileY: 3 })
-        .expect(200);
+      await makeRequest('POST', `/api/players/${freshPlayerId}/use-tool`, { tool: 'hoe', tileX: 3, tileY: 3 });
+      await makeRequest('POST', `/api/players/${freshPlayerId}/use-tool`, { tool: 'water', tileX: 3, tileY: 3 });
+      await makeRequest('POST', `/api/players/${freshPlayerId}/use-tool`, { tool: 'plant', tileX: 3, tileY: 3 });
 
       // Update crops
-      const response = await request(app)
-        .post(`/api/players/${freshPlayerId}/update-crops`)
-        .expect(200);
+      const response = await makeRequest('POST', `/api/players/${freshPlayerId}/update-crops`);
 
+      expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data.gameState).toBeDefined();
     });
@@ -299,10 +274,9 @@ describe('API Endpoints', () => {
 
   describe('GET /health', () => {
     it('should return health status', async () => {
-      const response = await request(app)
-        .get('/health')
-        .expect(200);
+      const response = await makeRequest('GET', '/health');
 
+      expect(response.status).toBe(200);
       expect(response.body.status).toBe('ok');
       expect(response.body.timestamp).toBeDefined();
     });
