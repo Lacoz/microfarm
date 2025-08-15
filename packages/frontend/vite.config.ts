@@ -19,5 +19,8 @@ export default defineConfig({
     alias: {
       '@microfarm/shared': path.resolve(__dirname, '../shared/dist/index.js')
     }
+  },
+  optimizeDeps: {
+    include: ['@microfarm/shared']
   }
 });

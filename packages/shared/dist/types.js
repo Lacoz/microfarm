@@ -1,5 +1,8 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GAME_CONSTANTS = void 0;
 // Constants
-export const GAME_CONSTANTS = {
+exports.GAME_CONSTANTS = {
     TILE_WIDTH: 32,
     TILE_HEIGHT: 16,
     INITIAL_MONEY: 100,

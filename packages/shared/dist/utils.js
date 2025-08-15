@@ -1,8 +1,18 @@
-import { GAME_CONSTANTS } from './types';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.initializeFarm = initializeFarm;
+exports.screenToTile = screenToTile;
+exports.tileToScreen = tileToScreen;
+exports.getEnergyCost = getEnergyCost;
+exports.calculateHarvestValue = calculateHarvestValue;
+exports.canUseTool = canUseTool;
+exports.generateId = generateId;
+exports.validatePlayerData = validatePlayerData;
+const types_1 = require("./types");
 /**
  * Initialize a new farm with grass tiles
  */
-export function initializeFarm(width, height) {
+function initializeFarm(width, height) {
     const tiles = [];
     for (let y = 0; y < height; y++) {
         tiles[y] = [];
@@ -22,11 +32,11 @@ export function initializeFarm(width, height) {
 /**
  * Convert screen coordinates to tile coordinates in isometric view
  */
-export function screenToTile(screenX, screenY, centerX, centerY, cameraX, cameraY, farmWidth, farmHeight) {
+function screenToTile(screenX, screenY, centerX, centerY, cameraX, cameraY, farmWidth, farmHeight) {
     const adjustedX = screenX - centerX - cameraX;
     const adjustedY = screenY - centerY - cameraY;
-    const tileX = Math.round((adjustedX / (GAME_CONSTANTS.TILE_WIDTH / 2) + adjustedY / (GAME_CONSTANTS.TILE_HEIGHT / 2)) / 2);
-    const tileY = Math.round((adjustedY / (GAME_CONSTANTS.TILE_HEIGHT / 2) - adjustedX / (GAME_CONSTANTS.TILE_WIDTH / 2)) / 2);
+    const tileX = Math.round((adjustedX / (types_1.GAME_CONSTANTS.TILE_WIDTH / 2) + adjustedY / (types_1.GAME_CONSTANTS.TILE_HEIGHT / 2)) / 2);
+    const tileY = Math.round((adjustedY / (types_1.GAME_CONSTANTS.TILE_HEIGHT / 2) - adjustedX / (types_1.GAME_CONSTANTS.TILE_WIDTH / 2)) / 2);
     if (tileX >= 0 && tileX < farmWidth && tileY >= 0 && tileY < farmHeight) {
         return { x: tileX, y: tileY };
     }
@@ -35,27 +45,27 @@ export function screenToTile(screenX, screenY, centerX, centerY, cameraX, camera
 /**
  * Convert tile coordinates to screen coordinates in isometric view
  */
-export function tileToScreen(tileX, tileY, centerX, centerY, cameraX, cameraY) {
-    const isoX = centerX + (tileX - tileY) * GAME_CONSTANTS.TILE_WIDTH / 2 + cameraX;
-    const isoY = centerY + (tileX + tileY) * GAME_CONSTANTS.TILE_HEIGHT / 2 + cameraY;
+function tileToScreen(tileX, tileY, centerX, centerY, cameraX, cameraY) {
+    const isoX = centerX + (tileX - tileY) * types_1.GAME_CONSTANTS.TILE_WIDTH / 2 + cameraX;
+    const isoY = centerY + (tileX + tileY) * types_1.GAME_CONSTANTS.TILE_HEIGHT / 2 + cameraY;
     return { x: isoX, y: isoY };
 }
 /**
  * Get energy cost for using a tool
  */
-export function getEnergyCost(tool) {
-    return GAME_CONSTANTS.ENERGY_COSTS[tool];
+function getEnergyCost(tool) {
+    return types_1.GAME_CONSTANTS.ENERGY_COSTS[tool];
 }
 /**
  * Calculate harvest value based on growth stage
  */
-export function calculateHarvestValue(growthStage) {
+function calculateHarvestValue(growthStage) {
     return 10 + growthStage * 5;
 }
 /**
  * Check if a tile can be used with a specific tool
  */
-export function canUseTool(tile, tool) {
+function canUseTool(tile, tool) {
     switch (tool) {
         case 'hoe':
             return tile.type === 'grass';
@@ -64,7 +74,7 @@ export function canUseTool(tile, tool) {
         case 'plant':
             return tile.type === 'tilled' && tile.watered && !tile.planted;
         case 'harvest':
-            return tile.planted && tile.growthStage >= GAME_CONSTANTS.GROWTH_STAGES;
+            return tile.planted && tile.growthStage >= types_1.GAME_CONSTANTS.GROWTH_STAGES;
         default:
             return false;
     }
@@ -72,13 +82,13 @@ export function canUseTool(tile, tool) {
 /**
  * Generate a unique ID
  */
-export function generateId() {
+function generateId() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
 }
 /**
  * Validate player data
  */
-export function validatePlayerData(data) {
+function validatePlayerData(data) {
     const errors = [];
     if (!data.name || typeof data.name !== 'string' || data.name.trim().length === 0) {
         errors.push('Name is required and must be a non-empty string');
