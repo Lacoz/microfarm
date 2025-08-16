@@ -1,21 +1,21 @@
 // Test setup for frontend
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 // Mock canvas
 Object.defineProperty(window, 'HTMLCanvasElement', {
   value: class HTMLCanvasElement {
     getContext: any;
     constructor() {
-      this.getContext = jest.fn(() => ({
-        clearRect: jest.fn(),
-        fillRect: jest.fn(),
-        beginPath: jest.fn(),
-        arc: jest.fn(),
-        fill: jest.fn(),
-        stroke: jest.fn(),
-        closePath: jest.fn(),
-        moveTo: jest.fn(),
-        lineTo: jest.fn(),
+      this.getContext = vi.fn(() => ({
+        clearRect: vi.fn(),
+        fillRect: vi.fn(),
+        beginPath: vi.fn(),
+        arc: vi.fn(),
+        fill: vi.fn(),
+        stroke: vi.fn(),
+        closePath: vi.fn(),
+        moveTo: vi.fn(),
+        lineTo: vi.fn(),
         strokeStyle: '',
         fillStyle: '',
         lineWidth: 1,
@@ -25,22 +25,22 @@ Object.defineProperty(window, 'HTMLCanvasElement', {
 });
 
 // Mock requestAnimationFrame
-global.requestAnimationFrame = jest.fn((callback: any) => {
+global.requestAnimationFrame = vi.fn((callback: any) => {
   setTimeout(callback, 0);
   return 1;
 });
 
-global.cancelAnimationFrame = jest.fn();
+global.cancelAnimationFrame = vi.fn();
 
 // Mock fetch
-(global as any).fetch = jest.fn();
+(global as any).fetch = vi.fn();
 
 // Mock console methods
 global.console = {
   ...console,
-  log: jest.fn(),
-  debug: jest.fn(),
-  info: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
+  log: vi.fn(),
+  debug: vi.fn(),
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
 };

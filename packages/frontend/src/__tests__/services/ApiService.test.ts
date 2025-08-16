@@ -1,15 +1,16 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ApiService } from '../../services/ApiService';
 import type { CreatePlayerRequest, ToolType } from '@microfarm/shared';
 
 // Mock fetch
-const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
+const mockFetch = fetch as any;
 
 describe('ApiService', () => {
   let apiService: ApiService;
 
   beforeEach(() => {
     apiService = new ApiService();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('createPlayer', () => {

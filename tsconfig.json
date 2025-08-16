@@ -19,7 +19,8 @@
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "allowImportingTsExtensions": false,
     "noEmit": false,
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true
   },
   "references": [],
   "exclude": [

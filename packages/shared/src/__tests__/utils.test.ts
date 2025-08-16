@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import {
   initializeFarm,
   screenToTile,
@@ -7,8 +8,8 @@ import {
   canUseTool,
   generateId,
   validatePlayerData
-} from '../utils';
-import { ToolType, FarmTile } from '../types';
+} from '../utils.js';
+import type { ToolType, FarmTile } from '../types.js';
 
 describe('Game Utils', () => {
   describe('initializeFarm', () => {
