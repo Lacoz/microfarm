@@ -7,7 +7,7 @@
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "target": "ES2024"
+    "target": "ES2022"
   },
   "include": [
     "src/**/*"
