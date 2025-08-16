@@ -1,7 +1,14 @@
 import type { Player } from '@microfarm/shared';
 
 export class CharacterRenderer {
-  drawCharacter(ctx: CanvasRenderingContext2D, x: number, y: number, player: Player): void {
+  drawCharacter(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    player: Player,
+    facing: 'up' | 'down' | 'left' | 'right' = 'down',
+    running: boolean = false
+  ): void {
     const { bodyType, hairStyle, hairColor, skinTone } = player;
     
     // Body
@@ -40,11 +47,12 @@ export class CharacterRenderer {
     }
     // Bald style - no hair drawn
     
-    // Eyes
+    // Eyes based on facing
     ctx.fillStyle = '#000';
     ctx.beginPath();
-    ctx.arc(x - 5, y - bodyHeight - 18, 2, 0, Math.PI * 2);
-    ctx.arc(x + 5, y - bodyHeight - 18, 2, 0, Math.PI * 2);
+    const eyeOffsetX = facing === 'left' ? -2 : facing === 'right' ? 2 : 0;
+    ctx.arc(x - 5 + eyeOffsetX, y - bodyHeight - 18, 2, 0, Math.PI * 2);
+    ctx.arc(x + 5 + eyeOffsetX, y - bodyHeight - 18, 2, 0, Math.PI * 2);
     ctx.fill();
     
     // Mouth
@@ -59,8 +67,9 @@ export class CharacterRenderer {
     ctx.fillRect(x - bodyWidth/2 - 8, y - bodyHeight + 5, 6, 20);
     ctx.fillRect(x + bodyWidth/2 + 2, y - bodyHeight + 5, 6, 20);
     
-    // Legs
-    ctx.fillRect(x - bodyWidth/2, y - 5, 6, 25);
-    ctx.fillRect(x + bodyWidth/2 - 6, y - 5, 6, 25);
+    // Legs (simple run animation: alternate leg y-offset)
+    const runOffset = running ? Math.sin(Date.now() / 100) * 4 : 0;
+    ctx.fillRect(x - bodyWidth/2, y - 5 + runOffset, 6, 25);
+    ctx.fillRect(x + bodyWidth/2 - 6, y - 5 - runOffset, 6, 25);
   }
 }

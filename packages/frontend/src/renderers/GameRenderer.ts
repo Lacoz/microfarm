@@ -8,13 +8,20 @@ export class GameRenderer {
   private ctx: CanvasRenderingContext2D;
   private centerX: number;
   private centerY: number;
+  private facing: 'up' | 'down' | 'left' | 'right' = 'down';
+  private running = false;
 
   constructor() {
     this.characterRenderer = new CharacterRenderer();
     this.canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
     this.ctx = this.canvas.getContext('2d')!;
+    // Fill viewport and center
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
     this.centerX = this.canvas.width / 2;
     this.centerY = this.canvas.height / 2;
+
+    window.addEventListener('resize', () => this.resize());
   }
 
   render(gameState: GameState): void {
@@ -22,17 +29,22 @@ export class GameRenderer {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     
     // Draw farm tiles
-    this.drawFarm(gameState.farm);
+    this.drawFarm(gameState.farm, gameState.camera);
     
     // Draw player
-    this.drawPlayer(gameState.player, gameState.camera);
+    this.drawPlayer(gameState.player);
   }
 
-  private drawFarm(farm: GameState['farm']): void {
+  private drawFarm(farm: GameState['farm'], camera: GameState['camera']): void {
+    // Fill the entire background as grass
+    this.ctx.fillStyle = '#7ec850';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
     for (let y = 0; y < farm.height; y++) {
       for (let x = 0; x < farm.width; x++) {
         const tile = farm.tiles[y][x];
-        const screenPos = tileToScreen(x, y, this.centerX, this.centerY, 0, 0);
+        // Apply camera offset to make the world scroll while keeping the figure centered
+        const screenPos = tileToScreen(x, y, this.centerX, this.centerY, -camera.x, -camera.y);
         
         // Skip tiles outside view
         if (screenPos.x < -50 || screenPos.x > this.canvas.width + 50 || 
@@ -92,11 +104,17 @@ export class GameRenderer {
     this.ctx.fill();
   }
 
-  private drawPlayer(player: GameState['player'], camera: GameState['camera']): void {
-    const playerX = this.centerX + camera.x;
-    const playerY = this.centerY + camera.y;
-    
-    this.characterRenderer.drawCharacter(this.ctx, playerX, playerY, player);
+  private drawPlayer(player: GameState['player']): void {
+    // Always render the player at the center of the screen
+    this.characterRenderer.drawCharacter(this.ctx, this.centerX, this.centerY, player, this.facing, this.running);
+  }
+
+  setFacing(direction: 'up' | 'down' | 'left' | 'right'): void {
+    this.facing = direction;
+  }
+
+  setRunning(isRunning: boolean): void {
+    this.running = isRunning;
   }
 
   getTileAtScreenPosition(screenX: number, screenY: number, gameState: GameState): { x: number; y: number } | null {
@@ -105,10 +123,17 @@ export class GameRenderer {
       screenY, 
       this.centerX, 
       this.centerY, 
-      gameState.camera.x, 
-      gameState.camera.y,
+      -gameState.camera.x, 
+      -gameState.camera.y,
       gameState.farm.width,
       gameState.farm.height
     );
+  }
+
+  private resize(): void {
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+    this.centerX = this.canvas.width / 2;
+    this.centerY = this.canvas.height / 2;
   }
 }

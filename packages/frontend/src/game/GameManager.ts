@@ -136,21 +136,29 @@ export class GameManager {
   private async moveCamera(direction: string): Promise<void> {
     if (!this.gameState || !this.playerId) return;
 
-    const cameraSpeed = 10;
+    const cameraSpeed = 16;
     let newCamera = { ...this.gameState.camera };
 
     switch (direction) {
       case 'up':
-        newCamera.y += cameraSpeed;
+        newCamera.y += cameraSpeed; // scroll map down visually
+        this.gameRenderer.setFacing('up');
+        this.gameRenderer.setRunning(true);
         break;
       case 'down':
-        newCamera.y -= cameraSpeed;
+        newCamera.y -= cameraSpeed; // scroll map up visually
+        this.gameRenderer.setFacing('down');
+        this.gameRenderer.setRunning(true);
         break;
       case 'left':
-        newCamera.x += cameraSpeed;
+        newCamera.x += cameraSpeed; // scroll map right visually
+        this.gameRenderer.setFacing('left');
+        this.gameRenderer.setRunning(true);
         break;
       case 'right':
-        newCamera.x -= cameraSpeed;
+        newCamera.x -= cameraSpeed; // scroll map left visually
+        this.gameRenderer.setFacing('right');
+        this.gameRenderer.setRunning(true);
         break;
     }
 
@@ -165,6 +173,8 @@ export class GameManager {
     } catch (error) {
       console.error('Failed to move camera:', error);
     }
+    // briefly show running, then stop
+    setTimeout(() => this.gameRenderer.setRunning(false), 120);
   }
 
   private startGameLoop(): void {
