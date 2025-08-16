@@ -3,35 +3,40 @@
   "version": "1.0.0",
   "description": "Isometric farming simulation game with TypeScript backend and frontend",
   "private": true,
+  "packageManager": "pnpm@9.0.0",
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "dev:backend": "npm run dev --workspace=packages/backend",
-    "dev:frontend": "npm run dev --workspace=packages/frontend",
-    "build": "npm run build --workspaces",
-    "build:shared": "npm run build --workspace=packages/shared",
-    "build:backend": "npm run build --workspace=packages/backend",
-    "build:frontend": "npm run build --workspace=packages/frontend",
-    "test": "npm run test --workspaces",
-    "test:shared": "npm run test --workspace=packages/shared",
-    "test:backend": "npm run test --workspace=packages/backend",
-    "test:frontend": "npm run test --workspace=packages/frontend",
-    "test:watch": "npm run test:watch --workspaces",
-    "test:coverage": "npm run test:coverage --workspaces",
-    "lint": "npm run lint --workspaces",
-    "clean": "npm run clean --workspaces && rm -rf node_modules",
-    "audit": "npm audit --audit-level=moderate",
-    "audit:fix": "npm audit fix",
-    "outdated": "npm outdated",
-    "depcheck": "npx depcheck --workspaces",
-    "ci": "npm run audit && npm run build:shared && npm run test && npm run build"
+    "dev": "concurrently \"pnpm --filter=@microfarm/backend run dev\" \"pnpm --filter=@microfarm/frontend run dev\"",
+    "dev:backend": "pnpm --filter=@microfarm/backend run dev",
+    "dev:frontend": "pnpm --filter=@microfarm/frontend run dev",
+    "build": "pnpm --filter=@microfarm/shared run build && pnpm --filter=@microfarm/backend run build && pnpm --filter=@microfarm/frontend run build",
+    "build:shared": "pnpm --filter=@microfarm/shared run build",
+    "build:backend": "pnpm --filter=@microfarm/backend run build",
+    "build:frontend": "pnpm --filter=@microfarm/frontend run build",
+    "test": "pnpm --filter=@microfarm/shared run test && pnpm --filter=@microfarm/backend run test && pnpm --filter=@microfarm/frontend run test",
+    "test:shared": "pnpm --filter=@microfarm/shared run test",
+    "test:backend": "pnpm --filter=@microfarm/backend run test",
+    "test:frontend": "pnpm --filter=@microfarm/frontend run test",
+    "test:watch": "pnpm --filter=@microfarm/shared run test:watch && pnpm --filter=@microfarm/backend run test:watch && pnpm --filter=@microfarm/frontend run test:watch",
+    "test:coverage": "pnpm --filter=@microfarm/shared run test:coverage && pnpm --filter=@microfarm/backend run test:coverage && pnpm --filter=@microfarm/frontend run test:coverage",
+    "lint": "pnpm --filter=@microfarm/shared run lint && pnpm --filter=@microfarm/backend run lint && pnpm --filter=@microfarm/frontend run lint",
+    "clean": "pnpm --filter=@microfarm/shared run clean && pnpm --filter=@microfarm/backend run clean && pnpm --filter=@microfarm/frontend run clean && rm -rf node_modules",
+    "audit": "pnpm audit --audit-level=moderate",
+    "audit:fix": "pnpm audit --fix",
+    "outdated": "pnpm outdated",
+    "depcheck": "pnpm exec depcheck --workspaces",
+    "ci": "pnpm run audit && pnpm run build:shared && pnpm run test && pnpm run build",
+    "install:all": "pnpm install",
+    "update:all": "pnpm update --recursive",
+    "add:shared": "pnpm add --filter=@microfarm/shared",
+    "add:backend": "pnpm add --filter=@microfarm/backend",
+    "add:frontend": "pnpm add --filter=@microfarm/frontend"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^24.3.0",
-    "@types/supertest": "^6.0.3",
     "@types/uuid": "^10.0.0",
     "concurrently": "^9.2.0",
     "depcheck": "^1.4.7",
@@ -42,7 +47,7 @@
     "typescript": "^5.3.0"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=8.0.0"
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0"
   }
 }

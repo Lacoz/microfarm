@@ -147,8 +147,8 @@ Thumbs.db
 *.bak
 *.backup
 
-# Lock files (keep package-lock.json but ignore others)
+# Lock files (keep pnpm-lock.yaml but ignore others)
 yarn.lock
-pnpm-lock.yaml
+package-lock.json
 
 

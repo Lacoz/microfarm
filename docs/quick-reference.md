@@ -4,29 +4,29 @@
 
 ### **Development**
 ```bash
-npm install                    # Install all dependencies
-npm run dev                    # Start both backend and frontend
-npm run dev:backend           # Start backend only (port 3001)
-npm run dev:frontend          # Start frontend only (port 3000)
+pnpm install                    # Install all dependencies
+pnpm run dev                    # Start both backend and frontend
+pnpm run dev:backend           # Start backend only (port 3001)
+pnpm run dev:frontend          # Start frontend only (port 3000)
 ```
 
 ### **Building**
 ```bash
-npm run build                 # Build all packages
-npm run build:shared          # Build shared package first
-npm run build:backend         # Build backend package
-npm run build:frontend        # Build frontend package
-npm run clean                 # Clean all build artifacts
+pnpm run build                 # Build all packages
+pnpm run build:shared          # Build shared package first
+pnpm run build:backend         # Build backend package
+pnpm run build:frontend        # Build frontend package
+pnpm run clean                 # Clean all build artifacts
 ```
 
 ### **Testing**
 ```bash
-npm run test                  # Run all tests
-npm run test:shared           # Test shared utilities
-npm run test:backend          # Test API endpoints
-npm run test:frontend         # Test frontend services
-npm run test:coverage         # Run tests with coverage
-npm run test:watch            # Run tests in watch mode
+pnpm run test                  # Run all tests
+pnpm run test:shared           # Test shared utilities
+pnpm run test:backend          # Test API endpoints
+pnpm run test:frontend         # Test frontend services
+pnpm run test:coverage         # Run tests with coverage
+pnpm run test:watch            # Run tests in watch mode
 ```
 
 ## 📁 File Structure

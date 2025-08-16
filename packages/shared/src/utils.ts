@@ -1,4 +1,5 @@
-import { FarmTile, TileType, ToolType, GAME_CONSTANTS } from './types';
+import type { FarmTile, TileType, ToolType } from './types.js';
+import { GAME_CONSTANTS } from './types.js';
 
 /**
  * Initialize a new farm with grass tiles

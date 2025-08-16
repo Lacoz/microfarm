@@ -3,16 +3,16 @@ import { serve } from '@hono/node-server';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { v4 as uuidv4 } from 'uuid';
-import { 
+import type { 
   Player, 
   GameState, 
   CreatePlayerRequest, 
   UpdateGameStateRequest, 
   ApiResponse,
-  GAME_CONSTANTS,
   ToolType,
   FarmTile
 } from '@microfarm/shared';
+import { GAME_CONSTANTS } from '@microfarm/shared';
 import { initializeFarm, generateId, validatePlayerData, getEnergyCost, canUseTool, calculateHarvestValue } from '@microfarm/shared';
 
 const app = new Hono();

@@ -44,8 +44,8 @@ This project is structured as an npm monorepo with the following packages:
 ## 🛠️ Development Setup
 
 ### Prerequisites
-- Node.js >= 18.0.0
-- npm >= 8.0.0
+- Node.js >= 22.0.0
+- pnpm >= 9.0.0
 
 ### Installation
 
@@ -53,54 +53,61 @@ This project is structured as an npm monorepo with the following packages:
    ```bash
    git clone <repository-url>
    cd microfarm
-   npm install
+   pnpm install
    ```
 
 2. **Build shared package**:
    ```bash
-   npm run build:shared
+   pnpm run build:shared
    ```
 
 3. **Start development servers**:
    ```bash
    # Start both backend and frontend
-   npm run dev
+   pnpm run dev
    
    # Or start individually
-   npm run dev:backend  # Backend on http://localhost:3001
-   npm run dev:frontend # Frontend on http://localhost:3000
+   pnpm run dev:backend  # Backend on http://localhost:3001
+   pnpm run dev:frontend # Frontend on http://localhost:3000
    ```
 
 ### Available Scripts
 
 ```bash
 # Development
-npm run dev              # Start both backend and frontend
-npm run dev:backend      # Start backend only
-npm run dev:frontend     # Start frontend only
+pnpm run dev              # Start both backend and frontend
+pnpm run dev:backend      # Start backend only
+pnpm run dev:frontend     # Start frontend only
 
 # Building
-npm run build            # Build all packages
-npm run build:backend    # Build backend only
-npm run build:frontend   # Build frontend only
+pnpm run build            # Build all packages
+pnpm run build:backend    # Build backend only
+pnpm run build:frontend   # Build frontend only
 
 # Utilities
-npm run clean            # Clean all build artifacts
+pnpm run clean            # Clean all build artifacts
 
 # Testing
-npm run test             # Run all tests
-npm run test:shared      # Test shared utilities
-npm run test:backend     # Test API endpoints
-npm run test:frontend    # Test frontend services
-npm run test:coverage    # Run tests with coverage
-npm run test:watch       # Run tests in watch mode
+pnpm run test             # Run all tests
+pnpm run test:shared      # Test shared utilities
+pnpm run test:backend     # Test API endpoints
+pnpm run test:frontend    # Test frontend services
+pnpm run test:coverage    # Run tests with coverage
+pnpm run test:watch       # Run tests in watch mode
 
 # CI/CD and Quality Checks
-npm run ci               # Full CI pipeline (audit + build + test)
-npm run audit            # Security audit
-npm run audit:fix        # Fix security vulnerabilities
-npm run outdated         # Check for outdated packages
-npm run depcheck         # Check for unused dependencies
+pnpm run ci               # Full CI pipeline (audit + build + test)
+pnpm run audit            # Security audit
+pnpm run audit:fix        # Fix security vulnerabilities
+pnpm run outdated         # Check for outdated packages
+pnpm run depcheck         # Check for unused dependencies
+
+# Package Management
+pnpm run install:all      # Install all dependencies
+pnpm run update:all       # Update all packages
+pnpm run add:shared       # Add dependency to shared package
+pnpm run add:backend      # Add dependency to backend package
+pnpm run add:frontend     # Add dependency to frontend package
 ```
 
 ## 🎮 How to Play
