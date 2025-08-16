@@ -1,4 +1,4 @@
-import { GameState, CreatePlayerRequest, ToolType, UpdateGameStateRequest } from '@microfarm/shared';
+import type { GameState, CreatePlayerRequest, ToolType, UpdateGameStateRequest } from '@microfarm/shared';
 import { ApiService } from '../services/ApiService';
 import { UIManager } from '../ui/UIManager';
 import { GameRenderer } from '../renderers/GameRenderer';

@@ -1,4 +1,4 @@
-import { GameState } from '@microfarm/shared';
+import type { GameState } from '@microfarm/shared';
 
 export class UIManager {
   updateGameUI(gameState: GameState): void {

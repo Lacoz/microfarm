@@ -1,4 +1,4 @@
-import { Player } from '@microfarm/shared';
+import type { Player } from '@microfarm/shared';
 
 export class CharacterRenderer {
   drawCharacter(ctx: CanvasRenderingContext2D, x: number, y: number, player: Player): void {

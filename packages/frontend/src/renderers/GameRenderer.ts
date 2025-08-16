@@ -1,6 +1,6 @@
-import { GameState, FarmTile, GAME_CONSTANTS } from '@microfarm/shared';
+import type { GameState, FarmTile } from '@microfarm/shared';
+import { GAME_CONSTANTS, screenToTile, tileToScreen } from '@microfarm/shared';
 import { CharacterRenderer } from './CharacterRenderer';
-import { screenToTile, tileToScreen } from '@microfarm/shared';
 
 export class GameRenderer {
   private characterRenderer: CharacterRenderer;

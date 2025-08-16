@@ -1,5 +1,5 @@
 import { ApiService } from '../../services/ApiService';
-import { CreatePlayerRequest, ToolType } from '@microfarm/shared';
+import type { CreatePlayerRequest, ToolType } from '@microfarm/shared';
 
 // Mock fetch
 const mockFetch = fetch as jest.MockedFunction<typeof fetch>;

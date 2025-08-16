@@ -1,4 +1,4 @@
-import { Player, BodyType, HairStyle, CreatePlayerRequest } from '@microfarm/shared';
+import type { Player, BodyType, HairStyle, CreatePlayerRequest } from '@microfarm/shared';
 import { GameManager } from '../game/GameManager';
 import { CharacterRenderer } from '../renderers/CharacterRenderer';
 
