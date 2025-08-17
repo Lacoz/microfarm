@@ -7,7 +7,7 @@
     "node": ">=22.0.0"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --clearScreen=false --logLevel info",
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",

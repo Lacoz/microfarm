@@ -8,7 +8,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "concurrently \"pnpm --filter=@microfarm/backend run dev\" \"pnpm --filter=@microfarm/frontend run dev\"",
+    "dev": "pnpm -r --parallel --stream --filter=@microfarm/backend --filter=@microfarm/frontend run dev",
     "dev:backend": "pnpm --filter=@microfarm/backend run dev",
     "dev:frontend": "pnpm --filter=@microfarm/frontend run dev",
     "build": "pnpm --filter=@microfarm/shared run build && pnpm --filter=@microfarm/backend run build && pnpm --filter=@microfarm/frontend run build",
@@ -35,7 +35,6 @@
     "add:frontend": "pnpm add --filter=@microfarm/frontend"
   },
   "devDependencies": {
-    "concurrently": "^9.2.0",
     "depcheck": "^1.4.7"
   },
   "engines": {

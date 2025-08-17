@@ -11,6 +11,7 @@ export class GameManager {
   private playerId: string | null = null;
   private animationFrameId: number | null = null;
   private cropUpdateInterval: number | null = null;
+  private cropUpdateMs: number = 3000;
 
   constructor(apiService: ApiService, uiManager: UIManager) {
     this.apiService = apiService;
@@ -34,7 +35,7 @@ export class GameManager {
       // Start game loop
       this.startGameLoop();
 
-      // Start crop update interval
+      // Start crop update interval (throttled)
       this.startCropUpdateInterval();
 
       // Update UI
@@ -188,16 +189,20 @@ export class GameManager {
   }
 
   private startCropUpdateInterval(): void {
-    this.cropUpdateInterval = window.setInterval(async () => {
-      if (this.playerId) {
-        try {
-          const result = await this.apiService.updateCrops(this.playerId);
-          this.gameState = result.gameState;
-        } catch (error) {
-          console.error('Failed to update crops:', error);
-        }
+    const tick = async () => {
+      if (!this.playerId) return;
+      if (document.hidden) return; // pause when tab hidden
+      try {
+        const result = await this.apiService.updateCrops(this.playerId);
+        this.gameState = result.gameState;
+      } catch (error) {
+        console.error('Failed to update crops:', error);
       }
-    }, 1000); // Update every second
+    };
+
+    // Immediate first tick, then interval
+    void tick();
+    this.cropUpdateInterval = window.setInterval(tick, this.cropUpdateMs);
   }
 
   stop(): void {
