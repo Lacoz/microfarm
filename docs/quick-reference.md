@@ -155,14 +155,14 @@ class ApiService {
 3. **Frontend** package (depends on shared)
 
 ### **Module Resolution**
-- **Shared**: ES modules for Vite compatibility
-- **Backend**: CommonJS for Node.js
+- **Shared**: NodeNext modules
+- **Backend**: NodeNext modules (Hono on Node.js 22)
 - **Frontend**: ES modules with Vite
 
 ## 🚨 Error Handling
 
 ### **Common Issues**
-1. **Build fails**: Run `npm run build:shared` first
+1. **Build fails**: Run `pnpm run build:shared` first
 2. **Module not found**: Check package dependencies
 3. **Type errors**: Ensure shared package is built
 4. **Port conflicts**: Check if servers are running
@@ -174,8 +174,8 @@ curl http://localhost:3001/health
 curl http://localhost:3000
 
 # View logs
-npm run dev:backend  # Backend logs
-npm run dev:frontend # Frontend logs
+pnpm run dev:backend  # Backend logs
+pnpm run dev:frontend # Frontend logs
 ```
 
 ## 📝 Code Style
@@ -228,4 +228,4 @@ describe('Feature Name', () => {
 
 ---
 
-**Quick Start**: `npm install && npm run build:shared && npm run dev`
+**Quick Start**: `pnpm install && pnpm run build:shared && pnpm run dev`

@@ -18,16 +18,16 @@ microfarm/
 │   └── quick-reference.md # Development quick reference
 ├── packages/
 │   ├── shared/           # Shared types and utilities
-│   ├── backend/          # Express.js API server
+│   ├── backend/          # Hono.js API server
 │   └── frontend/         # Vite-based frontend
 └── README.md             # Main project README
 ```
 
 ## 🚀 Getting Started
 
-1. **Install Dependencies**: `npm install`
-2. **Build Shared Package**: `npm run build:shared`
-3. **Start Development**: `npm run dev`
+1. **Install Dependencies**: `pnpm install`
+2. **Build Shared Package**: `pnpm run build:shared`
+3. **Start Development**: `pnpm run dev`
 4. **Access the Game**: http://localhost:3000
 
 ## 📖 Documentation Sections
@@ -38,7 +38,7 @@ microfarm/
 
 ### For Contributors
 - See the main [README.md](../README.md) for project overview
-- Check [Development Rules](../.cursor/rules.mdc) for coding standards
+- Check [Development Rules](../.cursor/rules/instructions.mdc) for coding standards
 - Use [Quick Reference](./quick-reference.md) for common tasks
 
 ## 🔧 Development Workflow

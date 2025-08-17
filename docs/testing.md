@@ -2,7 +2,7 @@
 
 ## 🧪 Testing Overview
 
-MicroFarm uses **Jest** as the primary testing framework with TypeScript support. The testing infrastructure is set up across all packages in the monorepo with comprehensive coverage of core functionality.
+MicroFarm uses **Vitest** as the primary testing framework with TypeScript support. The testing infrastructure is set up across all packages in the monorepo with comprehensive coverage of core functionality.
 
 ## 📊 Test Results Summary
 
@@ -30,11 +30,10 @@ MicroFarm uses **Jest** as the primary testing framework with TypeScript support
 
 ## 🏗️ Testing Architecture
 
-### **Jest Configuration**
-- **Root Level**: Global Jest config with TypeScript support
-- **Package Level**: Individual configs for specific environments
-- **Backend**: Node.js environment with supertest for API testing
-- **Frontend**: jsdom environment with canvas mocking
+### **Vitest Configuration**
+- **Per Package**: Each package has its own `vitest.config.ts`
+- **Backend**: Node.js environment, direct Hono `app.fetch` calls (no supertest)
+- **Frontend**: jsdom environment with canvas and fetch mocking
 
 ### **Test Structure**
 ```
@@ -75,36 +74,36 @@ packages/
 
 ### **All Tests**
 ```bash
-npm run test
+pnpm run test
 ```
 
 ### **Individual Packages**
 ```bash
-npm run test:shared    # Shared utilities and types
-npm run test:backend   # API endpoints and server logic
-npm run test:frontend  # Frontend services and components
+pnpm run test:shared    # Shared utilities and types
+pnpm run test:backend   # API endpoints and server logic
+pnpm run test:frontend  # Frontend services and components
 ```
 
 ### **With Coverage**
 ```bash
-npm run test:coverage
+pnpm run test:coverage
 ```
 
 ### **Watch Mode**
 ```bash
-npm run test:watch
+pnpm run test:watch
 ```
 
 ## 📋 Test Commands
 
 | Command | Description |
 |---------|-------------|
-| `npm run test` | Run all tests across all packages |
-| `npm run test:shared` | Test shared utilities and types |
-| `npm run test:backend` | Test backend API endpoints |
-| `npm run test:frontend` | Test frontend services |
-| `npm run test:coverage` | Run tests with coverage reports |
-| `npm run test:watch` | Run tests in watch mode |
+| `pnpm run test` | Run all tests across all packages |
+| `pnpm run test:shared` | Test shared utilities and types |
+| `pnpm run test:backend` | Test backend API endpoints |
+| `pnpm run test:frontend` | Test frontend services |
+| `pnpm run test:coverage` | Run tests with coverage reports |
+| `pnpm run test:watch` | Run tests in watch mode |
 
 ## 🎯 Test Coverage Goals
 
@@ -120,14 +119,14 @@ npm run test:watch
 
 ## 🔧 Test Configuration
 
-### **Jest Setup**
-- **TypeScript Support**: ts-jest preset
+### **Vitest Setup**
+- **TypeScript Support**: Native via Vite/Vitest
 - **Environment**: Node.js (backend), jsdom (frontend)
-- **Coverage**: HTML, LCOV, and text reports
-- **Mocking**: Canvas, fetch, and DOM APIs
+- **Coverage**: V8 coverage via `@vitest/coverage-v8`
+- **Mocking**: Canvas, fetch, and DOM APIs with `vi`
 
 ### **Test Environment**
-- **Backend**: Real Express server with supertest
+- **Backend**: Hono application tested via `app.fetch`
 - **Frontend**: Mocked browser environment
 - **Shared**: Pure Node.js environment
 
@@ -174,13 +173,13 @@ describe('Feature Name', () => {
 ### **Debug Commands**
 ```bash
 # Run specific test file
-npm run test -- packages/shared/src/__tests__/utils.test.ts
+pnpm run test -- packages/shared/src/__tests__/utils.test.ts
 
 # Run with verbose output
-npm run test -- --verbose
+pnpm run test -- --verbose
 
 # Run single test
-npm run test -- --testNamePattern="should create a farm"
+pnpm run test -- --testNamePattern="should create a farm"
 ```
 
 ## 📊 Coverage Reports

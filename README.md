@@ -4,7 +4,7 @@ A modern TypeScript-based isometric farming simulation game with a monorepo arch
 
 ## 🏗️ Architecture
 
-This project is structured as an npm monorepo with the following packages:
+This project is structured as a pnpm workspaces monorepo with the following packages:
 
 - **`@microfarm/shared`**: Shared types, utilities, and constants
 - **`@microfarm/backend`**: Hono.js API server with game logic
@@ -45,7 +45,7 @@ This project is structured as an npm monorepo with the following packages:
 
 ### Prerequisites
 - Node.js >= 22.0.0
-- pnpm >= 9.0.0
+- pnpm (latest recommended)
 
 ### Installation
 
@@ -76,8 +76,8 @@ This project is structured as an npm monorepo with the following packages:
 ```bash
 # Development
 pnpm run dev              # Start both backend and frontend
-pnpm run dev:backend      # Start backend only
-pnpm run dev:frontend     # Start frontend only
+pnpm run dev:backend      # Start backend only (Hono on 3001)
+pnpm run dev:frontend     # Start frontend only (Vite on 3000)
 
 # Building
 pnpm run build            # Build all packages
@@ -153,7 +153,7 @@ microfarm/
 │   │   │   ├── utils.ts  # Utility functions
 │   │   │   └── index.ts  # Main exports
 │   │   └── package.json
-│   ├── backend/          # Express.js API server
+│   ├── backend/          # Hono.js API server
 │   │   ├── src/
 │   │   │   └── index.ts  # Main server file
 │   │   └── package.json
@@ -188,7 +188,7 @@ This project uses GitHub Actions for continuous integration and deployment:
 ### **Automated Workflows**
 
 - **Test**: Runs on every push to `main` and pull requests
-  - Tests on Node.js 18.x and 20.x
+  - Tests on Node.js 18.x, 20.x, and 22.x
   - Runs security audits
   - Builds all packages
   - Runs comprehensive test suites
@@ -208,7 +208,7 @@ This project uses GitHub Actions for continuous integration and deployment:
 
 Run the full CI pipeline locally:
 ```bash
-npm run ci
+pnpm run ci
 ```
 
 This command runs:
@@ -231,11 +231,11 @@ This command runs:
 
 ```bash
 # Build all packages
-npm run build
+pnpm run build
 
 # Start production servers
-npm run start:backend  # Backend server
-npm run start:frontend # Frontend server
+pnpm --filter=@microfarm/backend run start   # Backend server on PORT (default 3001)
+pnpm --filter=@microfarm/frontend run preview # Frontend static preview (default 4173)
 ```
 
 ### Environment Variables

@@ -30,8 +30,8 @@
 
 ## 📦 Package Management
 - **Dependencies**: Keep minimal, use exact versions
-- **Scripts**: Use workspace commands (`npm run dev --workspace=packages/backend`)
-- **Build**: `npm run build:shared` → `npm run build:backend` → `npm run build:frontend`
+- **Scripts**: Use pnpm workspace filters (`pnpm --filter=@microfarm/backend run dev`)
+- **Build**: `pnpm run build:shared` → `pnpm run build:backend` → `pnpm run build:frontend`
 
 ## 🎮 Game-Specific
 - **State Sync**: Update game state through API calls
